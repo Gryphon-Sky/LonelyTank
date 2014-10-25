@@ -7,10 +7,9 @@ public class GameplayController : MonoBehaviour
     
     #region exposed
     
-    public Settings Settings;
-
     public InputController InputController;
 
+    public World World;
     public Tank Tank;
     
     #endregion
@@ -22,7 +21,36 @@ public class GameplayController : MonoBehaviour
     
     private void Awake()
     {
-        Tank.Init(InputController, Settings.TankMovingSpeed, Settings.TankRotationSpeed);
+        Tank.Init(InputController, World.OnTankEnteredToChunk);
+
+        InputController.OnSave = Save;
+        InputController.OnLoad = Load;
+        InputController.OnReset = Reset;
+
+        StorageController.Init(Tank, World);
+        Load();
+    }
+    
+    #endregion
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    #region private members
+
+    private void Save()
+    {
+        StorageController.Save(Tank, World);
+    }
+
+    private void Load()
+    {
+        StorageController.Load(Tank, World);
+    }
+    
+    private void Reset()
+    {
+        StorageController.Reset(Tank, World);
     }
 
     #endregion

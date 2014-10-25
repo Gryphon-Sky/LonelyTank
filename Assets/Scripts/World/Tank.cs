@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -8,11 +9,10 @@ public class Tank : MonoBehaviour
     
     #region public methods
     
-    public void Init(IInputProvider iInputProvider, float movingSpeed, float rotationSpeed)
+    public void Init(IInputProvider iInputProvider, Action<Chunk> onEnterToChunk)
     {
         _iInputProvider = iInputProvider;
-        _movingSpeed = movingSpeed;
-        _rotationSpeed = rotationSpeed;
+        _onEnterToChunk = onEnterToChunk;
     }
 
     #endregion
@@ -20,14 +20,30 @@ public class Tank : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
 
+    #region events
+    
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        Chunk chunk = col.transform.parent.GetComponent<Chunk>();
+        if(chunk != null)
+        {
+            Utils.InvokeAction(_onEnterToChunk, chunk);
+        }
+    }
+    
+    #endregion
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
     #region MonoDevelop
 
     private void Update()
     {
         Vector2 dir = Utils.DegreesToVector2(-transform.localEulerAngles.z);
-        rigidbody2D.velocity = dir * _movingSpeed * _iInputProvider.InputY;
+        rigidbody2D.velocity = dir * Settings.Instance.TankMovingSpeed * _iInputProvider.InputY;
 
-        rigidbody2D.angularVelocity = -_rotationSpeed * _iInputProvider.InputX;
+        rigidbody2D.angularVelocity = -Settings.Instance.TankRotationSpeed * _iInputProvider.InputX;
     }
 
     #endregion
@@ -38,8 +54,7 @@ public class Tank : MonoBehaviour
     #region private members
 
     private IInputProvider _iInputProvider;
-    private float _movingSpeed;
-    private float _rotationSpeed;
+    private Action<Chunk> _onEnterToChunk;
 
     #endregion
 

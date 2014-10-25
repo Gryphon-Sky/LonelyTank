@@ -1,55 +1,56 @@
 using System;
-using UnityEngine;
+using System.Collections.Generic;
 
-public class InputController : MonoBehaviour, IInputProvider
+[Serializable]
+public struct Position
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region IInputProvider
+    #region exposed
     
-    public float InputX { get; private set; }
-    public float InputY { get; private set; }
-    
+    public int X;
+    public int Y;
+
     #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region public members
-    
-    public Action OnSave;
-    public Action OnLoad;
-    public Action OnReset;
-    
-    #endregion
-    
+
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
 
-    #region MonoDevelop
+    #region creation
 
-    private void FixedUpdate()
+    public Position(int x, int y)
     {
-        InputX = Input.GetAxis("Horizontal");
-        InputY = Input.GetAxis("Vertical");
-        
-        if(Input.GetButtonUp("Save"))
-        {
-            Utils.InvokeAction(OnSave);
-        }
-        
-        if(Input.GetButtonUp("Load"))
-        {
-            Utils.InvokeAction(OnLoad);
-        }
-
-        if(Input.GetButtonUp("Reset"))
-        {
-            Utils.InvokeAction(OnReset);
-        }
+        X = x;
+        Y = y;
+    }
+    
+    #endregion
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    #region utility
+    
+    public override string ToString()
+    {
+        return string.Format("({0}, {1})", X, Y);
     }
 
+    public class Comparer: IComparer<Position>
+    {
+        public int Compare(Position pos1, Position pos2)
+        {
+            int yCompare = pos1.Y.CompareTo(pos2.Y);
+            if(yCompare != 0)
+            {
+                return yCompare;
+            }
+
+            return pos1.X.CompareTo(pos2.X);
+        }
+    }
+    
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////

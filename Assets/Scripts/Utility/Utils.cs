@@ -22,7 +22,15 @@ public static class Utils
             action();
         }
     }
-
+    
+    public static void InvokeAction<T>(Action<T> action, T param)
+    {
+        if(action != null)
+        {
+            action(param);
+        }
+    }
+    
     public static Vector2 DegreesToVector2(float degrees)
     {
         float radians = Mathf.Deg2Rad * degrees;
