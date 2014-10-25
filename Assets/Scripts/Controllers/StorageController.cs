@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -12,7 +13,7 @@ public static class StorageController
         public float TankY;
         public float TankAngle;
 
-        public Position[] ChunksPositions;
+        public KeyValuePair<Position, Chunk.Data>[] Chunks;
 
         public StoragableData(Tank tank, World world)
         {
@@ -20,7 +21,7 @@ public static class StorageController
             TankY = tank.transform.localPosition.y;
             TankAngle = tank.transform.eulerAngles.z;
 
-            ChunksPositions = world.GetChunksPositionsArray();
+            Chunks = world.ToArray();
         }
 
         public void Setup(Tank tank, World world)
@@ -34,13 +35,8 @@ public static class StorageController
             rot.z = TankAngle;
             tank.transform.localEulerAngles = rot;
 
-            world.MorpthTo(ChunksPositions);
+            world.FromArray(Chunks);
         }
-    }
-    
-    public static void Init(Tank tank, World world)
-    {
-        _initialData = new StoragableData(tank, world);
     }
     
     public static void Save(Tank tank, World world)
@@ -50,8 +46,9 @@ public static class StorageController
         
         using(FileStream fs = new FileStream(PATH, FileMode.OpenOrCreate))
         {
+            Utils.Log("Saving to " + fs.Name + "...");
             formatter.Serialize(fs, data);
-            Utils.Log("Game state saved to " + fs.Name);
+            Utils.Log("...done.");
         }
     }
 
@@ -63,9 +60,10 @@ public static class StorageController
         {
             using(FileStream fs = new FileStream(PATH, FileMode.Open))
             {
+                Utils.Log("Loading from " + fs.Name + "...");
                 StoragableData data = (StoragableData)formatter.Deserialize(fs);
                 data.Setup(tank, world);
-                Utils.Log("Game state loaded from " + fs.Name);
+                Utils.Log("...done.");
             }
         }
         else
@@ -74,11 +72,5 @@ public static class StorageController
         }
     }
 
-    public static void Reset(Tank tank, World world)
-    {
-        _initialData.Setup(tank, world);
-    }
-
-    private static StoragableData _initialData;
     private static readonly string PATH = Application.dataPath + "/../save.dat";
 }

@@ -1,57 +1,22 @@
 using UnityEngine;
-using System.Collections.Generic;
 
-public class World : MonoBehaviour
+public class World : ObjectsSet<Chunk, Chunk.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region exposed
+    #region ObjectsSet
     
-    public Transform ChunksParent;
+    protected override GameObject ObjectPrefab { get { return Settings.Instance.ChunkPrefab; } }
 
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region utility
-
-    public override string ToString()
+    protected override void Awake()
     {
-        string result = "";
-        foreach(var pair in _chunks)
-        {
-            result += string.Format("[{0}: {1}]", pair.Key, pair.Value);
-        }
-        return result;
+        base.Awake();
     }
     
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region MonoDevelop
-    
-    private void Awake()
+    protected override void Create()
     {
-        Create();
-    }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region creation
-    
-    private void Create()
-    {
-        if(_chunks == null)
-        {
-            _chunks = new SortedDictionary<Position, Chunk>(new Position.Comparer());
-        }
+        base.Create();
         EnlargeAround(0, 0);
     }
     
@@ -61,46 +26,13 @@ public class World : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////
     
     #region public methods
-
-    public Position[] GetChunksPositionsArray()
-    {
-        Position[] array = new Position[_chunks.Count];
-        _chunks.Keys.CopyTo(array, 0);
-        return array;
-    }
-
-    public void MorpthTo(Position[] positionsArray)
-    {
-        List<Position> positions = new List<Position>(positionsArray);
-
-        List<Position> chunksToRemove = new List<Position>();
-        foreach(Position pos in _chunks.Keys)
-        {
-            if(!positions.Contains(pos))
-            {
-                chunksToRemove.Add(pos);
-            }
-        }
-        foreach(Position pos in chunksToRemove)
-        {
-            Chunk chunk = _chunks[pos];
-            GameObject.Destroy(chunk.gameObject);
-
-            _chunks.Remove(pos);
-        }
-
-        foreach(Position pos in positions)
-        {
-            AddIfNeeded(pos);
-        }
-    }
-
+    
     public void OnTankEnteredToChunk(Chunk chunk)
     {
         Position pos = chunk.GetPosition();
         EnlargeAround(pos.X, pos.Y);
     }
-    
+
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -118,26 +50,6 @@ public class World : MonoBehaviour
             }
         }
     }
-
-    private void AddIfNeeded(Position pos)
-    {
-        if(!_chunks.ContainsKey(pos))
-        {
-            Chunk newChunk = Chunk.Create(Settings.Instance.ChunkPrefab);
-            newChunk.transform.parent = ChunksParent;
-            newChunk.SetPosition(pos);
-            _chunks[pos] = newChunk;
-        }
-    }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region private members
-
-    private SortedDictionary<Position, Chunk> _chunks;
 
     #endregion
     

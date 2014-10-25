@@ -27,7 +27,6 @@ public class GameplayController : MonoBehaviour
         InputController.OnLoad = Load;
         InputController.OnReset = Reset;
 
-        StorageController.Init(Tank, World);
         Load();
     }
     
@@ -50,7 +49,8 @@ public class GameplayController : MonoBehaviour
     
     private void Reset()
     {
-        StorageController.Reset(Tank, World);
+        Tank.Reset();
+        World.Reset();
     }
 
     #endregion

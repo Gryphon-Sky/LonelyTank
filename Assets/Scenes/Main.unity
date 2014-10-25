@@ -181,9 +181,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TankMovingSpeed: 40
   TankRotationSpeed: 70
+  Grid:
+    X: 16
+    Y: 12
   ChunkPrefab: {fileID: 100002, guid: 83a7d7aee92ee3b4089451afb6aad714, type: 2}
-  ChunkWidth: 100
-  ChunkHeight: 100
+  ChunkWidth: 1024
+  ChunkHeight: 768
+  ObstaclePrefab: {fileID: 100000, guid: 5cb2c824ecfda3144b584ffd3a371bda, type: 2}
+  ObstaclesInChunk: 50
 --- !u!1 &780847484
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,7 +320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b29bcb8f3ded83d44b120869333aa931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChunksParent: {fileID: 228692498}
+  Parent: {fileID: 228692498}
 --- !u!1 &2111351715
 GameObject:
   m_ObjectHideFlags: 0

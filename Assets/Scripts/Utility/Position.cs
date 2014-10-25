@@ -32,9 +32,34 @@ public struct Position
     
     #region utility
     
+    public static bool operator==(Position pos1, Position pos2)
+    {
+        return pos1.Equals(pos2);
+    }
+
+    public static bool operator!=(Position pos1, Position pos2)
+    {
+        return !pos1.Equals(pos2);
+    }
+    
     public override string ToString()
     {
         return string.Format("({0}, {1})", X, Y);
+    }
+
+    public override bool Equals(object other)
+    {
+        if(!(other is Position))
+        {
+            return false;
+        }
+        Position pos = (Position)other;
+        return X.Equals(pos.X) && Y.Equals(pos.Y);
+    }
+
+    public override int GetHashCode()
+    {
+        return 2221 * Y + X;
     }
 
     public class Comparer: IComparer<Position>

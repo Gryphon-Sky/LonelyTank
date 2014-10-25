@@ -15,6 +15,12 @@ public class Tank : MonoBehaviour
         _onEnterToChunk = onEnterToChunk;
     }
 
+    public void Reset()
+    {
+        transform.localPosition = Vector3.zero;
+        transform.localEulerAngles = Vector3.zero;
+    }
+
     #endregion
 
     ////////////////////////////////////////////////////////////////////////////////
