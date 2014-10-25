@@ -187,8 +187,11 @@ MonoBehaviour:
   ChunkPrefab: {fileID: 100002, guid: 83a7d7aee92ee3b4089451afb6aad714, type: 2}
   ChunkWidth: 1024
   ChunkHeight: 768
-  ObstaclePrefab: {fileID: 100000, guid: 5cb2c824ecfda3144b584ffd3a371bda, type: 2}
   ObstaclesInChunk: 50
+  ObstaclePrefab: {fileID: 100008, guid: fa57122bb6fbb964eb7cf67544d25342, type: 2}
+  TreeChance: .100000001
+  BushChance: .300000012
+  PuddleChance: .100000001
 --- !u!1 &780847484
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ public class GameplayController : MonoBehaviour
     
     private void Awake()
     {
-        Tank.Init(InputController, World.OnTankEnteredToChunk);
+        Tank.Init(InputController, World.OnTankEnteredToChunk, World.OnTankTouchesObstacle);
 
         InputController.OnSave = Save;
         InputController.OnLoad = Load;
@@ -35,7 +35,7 @@ public class GameplayController : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region private members
+    #region events
 
     private void Save()
     {

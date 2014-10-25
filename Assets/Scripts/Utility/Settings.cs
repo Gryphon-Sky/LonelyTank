@@ -16,8 +16,12 @@ public class Settings : MonoBehaviour
     public int ChunkWidth = 1024;
     public int ChunkHeight = 768;
 
-    public GameObject ObstaclePrefab;
     public int ObstaclesInChunk = 768;
+    public GameObject ObstaclePrefab;
+
+    public float TreeChance = 0.1f;
+    public float BushChance = 0.3f;
+    public float PuddleChance = 0.1f;
 
     #endregion
     

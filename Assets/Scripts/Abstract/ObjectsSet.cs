@@ -117,12 +117,14 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
         Create();
     }
 
-    private void RemoveAt(Position pos)
+    public void RemoveAt(Position pos)
     {
-        TComponent component = _objects[pos];
-        GameObject.Destroy(component.gameObject);
-        
-        _objects.Remove(pos);
+        Remove(pos, _objects[pos]);
+    }
+
+    public void Remove(TComponent component)
+    {
+        Remove(component.GetPosition(), component);
     }
 
     #endregion
@@ -183,6 +185,13 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
         _objects[pos] = component;
         
         return component;
+    }
+    
+    private void Remove(Position pos, TComponent component)
+    {
+        GameObject.Destroy(component.gameObject);
+        
+        _objects.Remove(pos);
     }
     
     #endregion

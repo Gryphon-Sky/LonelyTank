@@ -9,10 +9,11 @@ public class Tank : MonoBehaviour
     
     #region public methods
     
-    public void Init(IInputProvider iInputProvider, Action<Chunk> onEnterToChunk)
+    public void Init(IInputProvider iInputProvider, Action<Chunk> onEnterToChunk, Action<Obstacle> onTouchObstacle)
     {
         _iInputProvider = iInputProvider;
         _onEnterToChunk = onEnterToChunk;
+        _onTouchObstacle = onTouchObstacle;
     }
 
     public void Reset()
@@ -34,6 +35,15 @@ public class Tank : MonoBehaviour
         if(chunk != null)
         {
             Utils.InvokeAction(_onEnterToChunk, chunk);
+        }
+    }
+    
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        Obstacle obstacle = col.transform.parent.gameObject.GetComponent<Obstacle>();
+        if(obstacle != null)
+        {
+            Utils.InvokeAction(_onTouchObstacle, obstacle);
         }
     }
     
@@ -61,6 +71,7 @@ public class Tank : MonoBehaviour
 
     private IInputProvider _iInputProvider;
     private Action<Chunk> _onEnterToChunk;
+    private Action<Obstacle> _onTouchObstacle;
 
     #endregion
 

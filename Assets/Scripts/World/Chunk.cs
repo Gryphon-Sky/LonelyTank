@@ -80,6 +80,16 @@ public class Chunk : ObjectsSet<Obstacle, Obstacle.Data>, ISetObject<Chunk.Data>
         }
     }
 
+    public Position GetPosition()
+    {
+        Position pos;
+        
+        pos.X = Mathf.FloorToInt(transform.localPosition.x / Settings.Instance.ChunkWidth);
+        pos.Y = Mathf.FloorToInt(transform.localPosition.y / Settings.Instance.ChunkHeight);
+        
+        return pos;
+    }
+    
     public Data ToData()
     {
         return new Data(ToArray());
@@ -88,23 +98,6 @@ public class Chunk : ObjectsSet<Obstacle, Obstacle.Data>, ISetObject<Chunk.Data>
     public void FromData(Data data)
     {
         FromArray(data.Obstacles);
-    }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region public methods
-    
-    public Position GetPosition()
-    {
-        Position pos;
-
-        pos.X = Mathf.FloorToInt(transform.localPosition.x / Settings.Instance.ChunkWidth);
-        pos.Y = Mathf.FloorToInt(transform.localPosition.y / Settings.Instance.ChunkHeight);
-
-        return pos;
     }
     
     #endregion

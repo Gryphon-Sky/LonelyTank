@@ -25,12 +25,21 @@ public class World : ObjectsSet<Chunk, Chunk.Data>
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region public methods
+    #region public events
     
     public void OnTankEnteredToChunk(Chunk chunk)
     {
         Position pos = chunk.GetPosition();
         EnlargeAround(pos.X, pos.Y);
+    }
+
+    public void OnTankTouchesObstacle(Obstacle obstacle)
+    {
+        if(obstacle.IsBush)
+        {
+            Chunk chunk = obstacle.transform.parent.parent.GetComponent<Chunk>();
+            chunk.Remove(obstacle);
+        }
     }
 
     #endregion
