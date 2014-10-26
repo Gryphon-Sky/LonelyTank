@@ -1,8 +1,8 @@
-public interface INode<TGrid, TData>
+public interface INode<TData>
 {
     Position Pos { get; }
     
-    void Init(TGrid parent, Position pos);
+    void Init(Position pos);
     void GenerateContent();
 
     TData ToData();

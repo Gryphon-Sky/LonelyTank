@@ -43,6 +43,7 @@ GameObject:
   - 4: {fileID: 400004}
   - 212: {fileID: 21200004}
   - 58: {fileID: 5800004}
+  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: Bush
   m_TagString: Untagged
@@ -180,6 +181,17 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_Radius: 6
   m_Center: {x: 0, y: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26fd720d3f5f11e48868fa441df9ea18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -192,9 +204,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Tree: {fileID: 100006}
-  Bush: {fileID: 100004}
   Puddle: {fileID: 100002}
   Rock: {fileID: 100000}
+  Bush: {fileID: 11400000}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1

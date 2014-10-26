@@ -23,6 +23,12 @@ public class Settings : MonoBehaviour
     public float BushChance = 0.3f;
     public float PuddleChance = 0.1f;
 
+    public float BushSpawnPeriod = 1.0f;
+    public float BushDetectionRadius = 70.0f;
+    public float TankDetectionRadius = 25.0f;
+
+    public int MaxBushAround = 4;
+
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////

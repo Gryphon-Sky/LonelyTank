@@ -37,6 +37,11 @@ public static class Utils
         return new Vector2(Mathf.Sin(radians), Mathf.Cos(radians));
     }
     
+    public static float GetSqrDistance(Component a, Component b)
+    {
+        return Vector3.SqrMagnitude(a.transform.position - b.transform.position);
+    }
+    
     #endregion
 
     ////////////////////////////////////////////////////////////////////////////////

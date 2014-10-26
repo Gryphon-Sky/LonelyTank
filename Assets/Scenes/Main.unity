@@ -192,7 +192,10 @@ MonoBehaviour:
   TreeChance: .100000001
   BushChance: .300000012
   PuddleChance: .100000001
-  BushSpawnPeriod: 5
+  BushSpawnPeriod: .5
+  BushDetectionRadius: 70
+  TankDetectionRadius: 25
+  MaxBushAround: 4
 --- !u!1 &780847484
 GameObject:
   m_ObjectHideFlags: 0

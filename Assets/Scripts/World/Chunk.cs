@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Data>
+public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -30,20 +30,6 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region bushes!
-
-    public int BushesAmount { get; private set; }
-
-    public void AddBush()
-    {
-        ++BushesAmount;
-    }
-    
-    #endregion
-
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
     #region Grid
     
     protected override GameObject NodesPrefab { get { return Settings.Instance.ObstaclePrefab; } }
@@ -57,9 +43,8 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
 
     public Position Pos { get; private set; }
     
-    public void Init(World parent, Position pos)
+    public void Init(Position pos)
     {
-        BushesAmount = 0;
         Pos = pos;
 
         Terrain.localScale = new Vector3(Settings.Instance.ChunkWidth, Settings.Instance.ChunkHeight, 1);
@@ -74,23 +59,21 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
     {
         Position Grid = Settings.Instance.Grid;
 
-        List<Position> positions = new List<Position>(Grid.X * Grid.Y);
         for(int y = 0; y < Grid.Y; ++y)
         {
             for(int x = 0; x < Grid.X; ++x)
             {
-                positions.Add(new Position(x, y));
+                CreateNodeAt(new Position(x, y));
             }
         }
 
+        List<Obstacle> obstacles = new List<Obstacle>(_nodes.Values);
+
         for(int i = 0; i < Settings.Instance.ObstaclesInChunk; ++i)
         {
-            int index = UnityEngine.Random.Range(0, positions.Count);
-            Position pos = positions[index];
-
-            GenerateIfNeeded(pos);
-
-            positions.RemoveAt(index);
+            int index = UnityEngine.Random.Range(0, obstacles.Count);
+            obstacles[index].GenerateContent();
+            obstacles.RemoveAt(index);
         }
     }
 
@@ -102,15 +85,6 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
     public void FromData(Data data)
     {
         FromArray(data.Obstacles);
-    }
-    
-    public override void RemoveNode(Obstacle obstacle)
-    {
-        if(obstacle.IsBush)
-        {
-            --BushesAmount;
-        }
-        base.RemoveNode(obstacle);
     }
     
     #endregion

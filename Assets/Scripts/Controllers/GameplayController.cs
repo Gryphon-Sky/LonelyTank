@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class GameplayController : MonoBehaviour
 {
@@ -27,7 +28,9 @@ public class GameplayController : MonoBehaviour
         InputController.OnLoad = Load;
         InputController.OnReset = Reset;
 
-        // Load();
+        //Load();
+
+        StartCoroutine(BushSpawnCoroutine());
     }
     
     #endregion
@@ -37,7 +40,7 @@ public class GameplayController : MonoBehaviour
     
     #region events
 
-    private void Save()
+        private void Save()
     {
         StorageController.Save(Tank, World);
     }
@@ -51,6 +54,15 @@ public class GameplayController : MonoBehaviour
     {
         Tank.Reset();
         World.Reset();
+    }
+
+    private IEnumerator BushSpawnCoroutine()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(Settings.Instance.BushSpawnPeriod);
+            World.SpawnBush(Tank);
+        }
     }
 
     #endregion

@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
-    where TSelf: Grid<TSelf, TNode, TData>
-    where TNode: Component, INode<TSelf, TData>
+public abstract class Grid<TNode, TData> : MonoBehaviour
+    where TNode: Component, INode<TData>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -29,11 +28,11 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
         }
     }
     
-    public virtual void RemoveNode(TNode node)
+    protected virtual void RemoveNodeFrom(Position pos)
     {
-        RemoveNode(node.Pos, node);
+        _nodes.Remove(pos);
     }
-    
+
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -67,24 +66,13 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
         }
         foreach(Position pos in toRemove)
         {
-            RemoveNodeAt(pos);
+            RemoveNodeFrom(pos);
         }
         
         foreach(var pair in list)
         {
             SetNodeTo(pair.Key, pair.Value);
         }
-    }
-    
-    public void Reset()
-    {
-        List<Position> positions = new List<Position>(_nodes.Keys);
-        foreach(Position pos in positions)
-        {
-            RemoveNodeAt(pos);
-        }
-        
-        Create();
     }
     
     #endregion
@@ -101,6 +89,18 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
             TNode node = CreateNodeAt(pos);
             node.GenerateContent();
         }
+    }
+    
+    protected TNode CreateNodeAt(Position pos)
+    {
+        GameObject go = (GameObject.Instantiate(NodesPrefab) as GameObject);
+        go.transform.parent = NodesParent;
+        
+        TNode node = go.GetComponent<TNode>();
+        node.Init(pos);
+        _nodes[pos] = node;
+        
+        return node;
     }
     
     #endregion
@@ -135,38 +135,14 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
         }
     }
 
-    private TNode CreateNodeAt(Position pos)
-    {
-        GameObject go = (GameObject.Instantiate(NodesPrefab) as GameObject);
-        go.transform.parent = NodesParent;
-        
-        TNode node = go.GetComponent<TNode>();
-        node.Init((TSelf)this, pos);
-        _nodes[pos] = node;
-        
-        return node;
-    }
-
-    private void RemoveNode(Position pos, TNode node)
-    {
-        GameObject.Destroy(node.gameObject);
-        
-        _nodes.Remove(pos);
-    }
-    
-    private void RemoveNodeAt(Position pos)
-    {
-        RemoveNode(pos, _nodes[pos]);
-    }
-    
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region private members
+    #region protected members
 
-    private SortedDictionary<Position, TNode> _nodes;
+    protected SortedDictionary<Position, TNode> _nodes;
 
     #endregion
     

@@ -1,13 +1,14 @@
 using System;
 using UnityEngine;
 
-public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
+public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
 
     public enum EType
     {
+        None,
         Tree,
         Bush,
         Puddle,
@@ -31,18 +32,44 @@ public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
     #region exposed
 
     public GameObject Tree;
-    public GameObject Bush;
     public GameObject Puddle;
     public GameObject Rock;
+
+    public Bush Bush;
 
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region propertiex
+    #region properties
 
-    public bool IsBush { get { return (_type == EType.Bush); } }
+    public EType Type
+    {
+        get { return _type; }
+        private set
+        {
+            _type = value;
+            UpdateView();
+        }
+    }
+
+    #endregion
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    #region public methods
+
+    public void SpawnBush()
+    {
+        Type = EType.Bush;
+    }
+
+    public void Reset()
+    {
+        Type = EType.None;
+    }
     
     #endregion
     
@@ -53,11 +80,10 @@ public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
     
     public Position Pos { get; private set; }
 
-    public void Init(Chunk parent, Position pos)
+    public void Init(Position pos)
     {
         Pos = pos;
-        _parent = parent;
-
+        
         int width = Settings.Instance.ChunkWidth / Settings.Instance.Grid.X;
         int height = Settings.Instance.ChunkHeight / Settings.Instance.Grid.Y;
 
@@ -68,44 +94,47 @@ public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
         localPos.x = left + Pos.X * width;
         localPos.y = bottom + Pos.Y * height;
         transform.localPosition = localPos;
+
+        Type = EType.None;
     }
     
     public void GenerateContent()
     {
-        _type = EType.Rock;
         float random = UnityEngine.Random.value;
         if(random < Settings.Instance.TreeChance)
         {
-            _type = EType.Tree;
+            Type = EType.Tree;
         }
         else
         {
             random -= Settings.Instance.TreeChance;
             if(random < Settings.Instance.BushChance)
             {
-                _type = EType.Bush;
+                Type = EType.Bush;
             }
             else
             {
                 random -= Settings.Instance.BushChance;
                 if(random < Settings.Instance.PuddleChance)
                 {
-                    _type = EType.Puddle;
+                    Type = EType.Puddle;
+                }
+                else
+                {
+                    Type = EType.Rock;
                 }
             }
         }
-        UpdateView();
     }
 
     public Data ToData()
     {
-        return new Data(_type);
+        return new Data(Type);
     }
 
     public void FromData(Data data)
     {
-        _type = (EType)data.Type;
-        UpdateView();
+        Type = (EType)data.Type;
     }
     
     #endregion
@@ -117,15 +146,11 @@ public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
     
     private void UpdateView()
     {
-        Tree.SetActive(_type == EType.Tree);
-        Bush.SetActive(_type == EType.Bush);
-        Puddle.SetActive(_type == EType.Puddle);
-        Rock.SetActive(_type == EType.Rock);
+        Tree.SetActive(Type == EType.Tree);
+        Puddle.SetActive(Type == EType.Puddle);
+        Rock.SetActive(Type == EType.Rock);
 
-        if(IsBush)
-        {
-            _parent.AddBush();
-        }
+        Bush.gameObject.SetActive(Type == EType.Bush);
     }
     
     #endregion
@@ -136,7 +161,6 @@ public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
     #region private members
 
     private EType _type;
-    private Chunk _parent;
 
     #endregion
     
