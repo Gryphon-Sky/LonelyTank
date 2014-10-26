@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
+public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -30,14 +30,23 @@ public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region Grid
+    #region bushes!
 
-    protected override GameObject ObjectPrefab { get { return Settings.Instance.ObstaclePrefab; } }
-    
-    protected override void Awake()
+    public int BushesAmount { get; private set; }
+
+    public void AddBush()
     {
-        base.Awake();
+        ++BushesAmount;
     }
+    
+    #endregion
+
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    #region Grid
+    
+    protected override GameObject ObjectPrefab { get { return Settings.Instance.ObstaclePrefab; } }
     
     #endregion
     
@@ -48,8 +57,9 @@ public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
 
     public Position Pos { get; private set; }
     
-    public void Init(Position pos)
+    public void Init(World parent, Position pos)
     {
+        BushesAmount = 0;
         Pos = pos;
 
         Terrain.localScale = new Vector3(Settings.Instance.ChunkWidth, Settings.Instance.ChunkHeight, 1);
@@ -92,6 +102,15 @@ public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
     public void FromData(Data data)
     {
         FromArray(data.Obstacles);
+    }
+    
+    public override void Remove(Obstacle obstacle)
+    {
+        if(obstacle.IsBush)
+        {
+            --BushesAmount;
+        }
+        base.Remove(obstacle);
     }
     
     #endregion

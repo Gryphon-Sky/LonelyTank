@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
+public class Obstacle : MonoBehaviour, INode<Chunk, Obstacle.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -53,9 +53,10 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
     
     public Position Pos { get; private set; }
 
-    public void Init(Position pos)
+    public void Init(Chunk parent, Position pos)
     {
         Pos = pos;
+        _parent = parent;
 
         int width = Settings.Instance.ChunkWidth / Settings.Instance.Grid.X;
         int height = Settings.Instance.ChunkHeight / Settings.Instance.Grid.Y;
@@ -120,6 +121,11 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
         Bush.SetActive(_type == EType.Bush);
         Puddle.SetActive(_type == EType.Puddle);
         Rock.SetActive(_type == EType.Rock);
+
+        if(IsBush)
+        {
+            _parent.AddBush();
+        }
     }
     
     #endregion
@@ -130,6 +136,7 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
     #region private members
 
     private EType _type;
+    private Chunk _parent;
 
     #endregion
     

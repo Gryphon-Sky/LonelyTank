@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class Grid<TComponent, TData> : MonoBehaviour
-    where TComponent: Component, INode<TData>
+public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
+    where TSelf: Grid<TSelf, TNode, TData>
+    where TNode: Component, INode<TSelf, TData>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -10,58 +11,27 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
     #region exposed
     
     public Transform ObjectsParent;
-
+    
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region properties
-
+    #region overridables
+    
     protected abstract GameObject ObjectPrefab { get; }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region utility
-    
-    public override string ToString()
-    {
-        string result = "";
-        foreach(var pair in _objects)
-        {
-            result += string.Format("[{0}: {1}]", pair.Key, pair.Value);
-        }
-        return result;
-    }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region MonoDevelop
-    
-    protected virtual void Awake()
-    {
-        Create();
-    }
-    
-    #endregion
-    
-    ////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////
-    
-    #region creation
     
     protected virtual void Create()
     {
         if(_objects == null)
         {
-            _objects = new SortedDictionary<Position, TComponent>(new Position.Comparer());
+            _objects = new SortedDictionary<Position, TNode>(new Position.Comparer());
         }
+    }
+    
+    public virtual void Remove(TNode node)
+    {
+        Remove(node.Pos, node);
     }
     
     #endregion
@@ -70,7 +40,7 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
     ////////////////////////////////////////////////////////////////////////////////
     
     #region public methods
-
+    
     public KeyValuePair<Position, TData>[] ToArray()
     {
         KeyValuePair<Position, TData>[] array = new KeyValuePair<Position, TData>[_objects.Count];
@@ -82,11 +52,11 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
         }
         return array;
     }
-
+    
     public void FromArray(KeyValuePair<Position, TData>[] array)
     {
         var list = new List<KeyValuePair<Position, TData>>(array);
-
+        
         List<Position> toRemove = new List<Position>();
         foreach(Position pos in _objects.Keys)
         {
@@ -99,13 +69,13 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
         {
             RemoveAt(pos);
         }
-
+        
         foreach(var pair in list)
         {
-            SetObjectTo(pair.Key, pair.Value);
+            SetNodeTo(pair.Key, pair.Value);
         }
     }
-
+    
     public void Reset()
     {
         List<Position> positions = new List<Position>(_objects.Keys);
@@ -113,20 +83,10 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
         {
             RemoveAt(pos);
         }
-
+        
         Create();
     }
-
-    public void RemoveAt(Position pos)
-    {
-        Remove(pos, _objects[pos]);
-    }
-
-    public void Remove(TComponent component)
-    {
-        Remove(component.Pos, component);
-    }
-
+    
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -138,9 +98,21 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
     {
         if(!_objects.ContainsKey(pos))
         {
-            TComponent component = Create(pos);
-            component.GenerateContent();
+            TNode node = CreateAt(pos);
+            node.GenerateContent();
         }
+    }
+    
+    #endregion
+    
+    ////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////
+    
+    #region MonoBehaviour
+    
+    private void Awake()
+    {
+        Create();
     }
     
     #endregion
@@ -150,7 +122,7 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
     
     #region private methods
     
-    private void SetObjectTo(Position pos, TData initialData)
+    private void SetNodeTo(Position pos, TData initialData)
     {
         if(_objects.ContainsKey(pos))
         {
@@ -158,28 +130,33 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
         }
         else
         {
-            TComponent component = Create(pos);
-            component.FromData(initialData);
+            TNode node = CreateAt(pos);
+            node.FromData(initialData);
         }
     }
 
-    private TComponent Create(Position pos)
+    private TNode CreateAt(Position pos)
     {
         GameObject go = (GameObject.Instantiate(ObjectPrefab) as GameObject);
         go.transform.parent = ObjectsParent;
         
-        TComponent component = go.GetComponent<TComponent>();
-        component.Init(pos);
-        _objects[pos] = component;
+        TNode node = go.GetComponent<TNode>();
+        node.Init((TSelf)this, pos);
+        _objects[pos] = node;
         
-        return component;
+        return node;
     }
 
-    private void Remove(Position pos, TComponent component)
+    private void Remove(Position pos, TNode node)
     {
-        GameObject.Destroy(component.gameObject);
+        GameObject.Destroy(node.gameObject);
         
         _objects.Remove(pos);
+    }
+    
+    private void RemoveAt(Position pos)
+    {
+        Remove(pos, _objects[pos]);
     }
     
     #endregion
@@ -189,7 +166,7 @@ public abstract class Grid<TComponent, TData> : MonoBehaviour
     
     #region private members
 
-    private SortedDictionary<Position, TComponent> _objects;
+    private SortedDictionary<Position, TNode> _objects;
 
     #endregion
     

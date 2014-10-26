@@ -27,7 +27,7 @@ public class GameplayController : MonoBehaviour
         InputController.OnLoad = Load;
         InputController.OnReset = Reset;
 
-        Load();
+        // Load();
     }
     
     #endregion

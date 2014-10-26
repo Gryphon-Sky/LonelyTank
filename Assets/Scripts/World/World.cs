@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class World : Grid<Chunk, Chunk.Data>
+public class World : Grid<World, Chunk, Chunk.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
@@ -9,11 +9,6 @@ public class World : Grid<Chunk, Chunk.Data>
     
     protected override GameObject ObjectPrefab { get { return Settings.Instance.ChunkPrefab; } }
 
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-    
     protected override void Create()
     {
         base.Create();
