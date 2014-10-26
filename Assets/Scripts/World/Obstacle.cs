@@ -49,10 +49,14 @@ public class Obstacle : MonoBehaviour, ISetObject<Obstacle.Data>
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region SetObject
+    #region ISetObject
     
+    public Position Pos { get; private set; }
+
     public void Init(Position pos)
     {
+        Pos = pos;
+
         int width = Settings.Instance.ChunkWidth / Settings.Instance.Grid.X;
         int height = Settings.Instance.ChunkHeight / Settings.Instance.Grid.Y;
 
@@ -60,8 +64,8 @@ public class Obstacle : MonoBehaviour, ISetObject<Obstacle.Data>
         int bottom = (height - Settings.Instance.ChunkHeight) / 2;
 
         Vector3 localPos = transform.localPosition;
-        localPos.x = left + pos.X * width;
-        localPos.y = bottom + pos.Y * height;
+        localPos.x = left + Pos.X * width;
+        localPos.y = bottom + Pos.Y * height;
         transform.localPosition = localPos;
     }
     
@@ -92,22 +96,6 @@ public class Obstacle : MonoBehaviour, ISetObject<Obstacle.Data>
         UpdateView();
     }
 
-    public Position GetPosition()
-    {
-        Position pos;
-
-        int width = Settings.Instance.ChunkWidth / Settings.Instance.Grid.X;
-        int height = Settings.Instance.ChunkHeight / Settings.Instance.Grid.Y;
-        
-        int left = (width - Settings.Instance.ChunkWidth) / 2;
-        int bottom = (height - Settings.Instance.ChunkHeight) / 2;
-        
-        pos.X = Mathf.FloorToInt(transform.localPosition.x - left / width);
-        pos.Y = Mathf.FloorToInt(transform.localPosition.y - bottom / height);
-
-        return pos;
-    }
-    
     public Data ToData()
     {
         return new Data(_type);

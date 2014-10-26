@@ -29,8 +29,7 @@ public class World : ObjectsSet<Chunk, Chunk.Data>
     
     public void OnTankEnteredToChunk(Chunk chunk)
     {
-        Position pos = chunk.GetPosition();
-        EnlargeAround(pos.X, pos.Y);
+        EnlargeAround(chunk.Pos.X, chunk.Pos.Y);
     }
 
     public void OnTankTouchesObstacle(Obstacle obstacle)
@@ -55,7 +54,7 @@ public class World : ObjectsSet<Chunk, Chunk.Data>
         {
             for(int i = x - 1; i <= x + 1; ++i)
             {
-                AddIfNeeded(new Position(i, j));
+                GenerateIfNeeded(new Position(i, j));
             }
         }
     }

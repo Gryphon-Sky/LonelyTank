@@ -9,7 +9,7 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
     
     #region exposed
     
-    public Transform Parent;
+    public Transform ObjectsParent;
 
     #endregion
     
@@ -102,7 +102,7 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
 
         foreach(var pair in list)
         {
-            AddIfNeeded(pair.Key, pair.Value);
+            SetObjectTo(pair.Key, pair.Value);
         }
     }
 
@@ -124,7 +124,7 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
 
     public void Remove(TComponent component)
     {
-        Remove(component.GetPosition(), component);
+        Remove(component.Pos, component);
     }
 
     #endregion
@@ -134,11 +134,12 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
     
     #region protected methods
     
-    protected void AddIfNeeded(Position pos)
+    protected void GenerateIfNeeded(Position pos)
     {
         if(!_objects.ContainsKey(pos))
         {
-            Create(pos);
+            TComponent component = Create(pos);
+            component.GenerateContent();
         }
     }
     
@@ -149,7 +150,7 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
     
     #region private methods
     
-    private void AddIfNeeded(Position pos, TData initialData)
+    private void SetObjectTo(Position pos, TData initialData)
     {
         if(_objects.ContainsKey(pos))
         {
@@ -157,36 +158,23 @@ public abstract class ObjectsSet<TComponent, TData> : MonoBehaviour
         }
         else
         {
-            Create(pos, initialData);
+            TComponent component = Create(pos);
+            component.FromData(initialData);
         }
     }
 
-    private TComponent Create(Position pos, TData initialData)
-    {
-        GameObject go = (GameObject.Instantiate(ObjectPrefab) as GameObject);
-        go.transform.parent = Parent;
-
-        TComponent component = go.GetComponent<TComponent>();
-        component.Init(pos);
-        component.FromData(initialData);
-        _objects[pos] = component;
-
-        return component;
-    }
-    
     private TComponent Create(Position pos)
     {
         GameObject go = (GameObject.Instantiate(ObjectPrefab) as GameObject);
-        go.transform.parent = Parent;
+        go.transform.parent = ObjectsParent;
         
         TComponent component = go.GetComponent<TComponent>();
         component.Init(pos);
-        component.GenerateContent();
         _objects[pos] = component;
         
         return component;
     }
-    
+
     private void Remove(Position pos, TComponent component)
     {
         GameObject.Destroy(component.gameObject);

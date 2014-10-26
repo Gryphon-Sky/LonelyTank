@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abcdce09271e874fafa29d533f1a8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Parent: {fileID: 400004}
+  ObjectsParent: {fileID: 400004}
   Terrain: {fileID: 400000}
 --- !u!114 &11400002
 MonoBehaviour:

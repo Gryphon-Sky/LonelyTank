@@ -44,15 +44,19 @@ public class Chunk : ObjectsSet<Obstacle, Obstacle.Data>, ISetObject<Chunk.Data>
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
-    #region SetObject
+    #region ISetObject
+
+    public Position Pos { get; private set; }
     
     public void Init(Position pos)
     {
+        Pos = pos;
+
         Terrain.localScale = new Vector3(Settings.Instance.ChunkWidth, Settings.Instance.ChunkHeight, 1);
 
         Vector3 localPos = transform.localPosition;
-        localPos.x = Settings.Instance.ChunkWidth * pos.X;
-        localPos.y = Settings.Instance.ChunkHeight * pos.Y;
+        localPos.x = Settings.Instance.ChunkWidth * Pos.X;
+        localPos.y = Settings.Instance.ChunkHeight * Pos.Y;
         transform.localPosition = localPos;
     }
     
@@ -74,22 +78,12 @@ public class Chunk : ObjectsSet<Obstacle, Obstacle.Data>, ISetObject<Chunk.Data>
             int index = UnityEngine.Random.Range(0, positions.Count);
             Position pos = positions[index];
 
-            AddIfNeeded(pos);
+            GenerateIfNeeded(pos);
 
             positions.RemoveAt(index);
         }
     }
 
-    public Position GetPosition()
-    {
-        Position pos;
-        
-        pos.X = Mathf.FloorToInt(transform.localPosition.x / Settings.Instance.ChunkWidth);
-        pos.Y = Mathf.FloorToInt(transform.localPosition.y / Settings.Instance.ChunkHeight);
-        
-        return pos;
-    }
-    
     public Data ToData()
     {
         return new Data(ToArray());
