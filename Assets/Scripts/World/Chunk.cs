@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : ObjectsSet<Obstacle, Obstacle.Data>, ISetObject<Chunk.Data>
+public class Chunk : Grid<Obstacle, Obstacle.Data>, INode<Chunk.Data>
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
