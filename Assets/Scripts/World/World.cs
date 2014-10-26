@@ -81,10 +81,8 @@ public class World : Grid<Chunk, Chunk.Data>
                 bushSlot = slot.Key;
                 break;
             }
-            else
-            {
-                bushSeed -= slot.Value;
-            }
+
+            bushSeed -= slot.Value;
         }
 
         if(bushSlot != null)
