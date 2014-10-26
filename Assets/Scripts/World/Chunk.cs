@@ -46,7 +46,7 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
     
     #region Grid
     
-    protected override GameObject ObjectPrefab { get { return Settings.Instance.ObstaclePrefab; } }
+    protected override GameObject NodesPrefab { get { return Settings.Instance.ObstaclePrefab; } }
     
     #endregion
     
@@ -104,13 +104,13 @@ public class Chunk : Grid<Chunk, Obstacle, Obstacle.Data>, INode<World, Chunk.Da
         FromArray(data.Obstacles);
     }
     
-    public override void Remove(Obstacle obstacle)
+    public override void RemoveNode(Obstacle obstacle)
     {
         if(obstacle.IsBush)
         {
             --BushesAmount;
         }
-        base.Remove(obstacle);
+        base.RemoveNode(obstacle);
     }
     
     #endregion

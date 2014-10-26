@@ -10,7 +10,7 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     #region exposed
     
-    public Transform ObjectsParent;
+    public Transform NodesParent;
     
     #endregion
     
@@ -19,19 +19,19 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     #region overridables
     
-    protected abstract GameObject ObjectPrefab { get; }
+    protected abstract GameObject NodesPrefab { get; }
     
     protected virtual void Create()
     {
-        if(_objects == null)
+        if(_nodes == null)
         {
-            _objects = new SortedDictionary<Position, TNode>(new Position.Comparer());
+            _nodes = new SortedDictionary<Position, TNode>(new Position.Comparer());
         }
     }
     
-    public virtual void Remove(TNode node)
+    public virtual void RemoveNode(TNode node)
     {
-        Remove(node.Pos, node);
+        RemoveNode(node.Pos, node);
     }
     
     #endregion
@@ -43,9 +43,9 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     public KeyValuePair<Position, TData>[] ToArray()
     {
-        KeyValuePair<Position, TData>[] array = new KeyValuePair<Position, TData>[_objects.Count];
+        KeyValuePair<Position, TData>[] array = new KeyValuePair<Position, TData>[_nodes.Count];
         int i = 0;
-        foreach(var pair in _objects)
+        foreach(var pair in _nodes)
         {
             array[i] = new KeyValuePair<Position, TData>(pair.Key, pair.Value.ToData());
             ++i;
@@ -58,7 +58,7 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
         var list = new List<KeyValuePair<Position, TData>>(array);
         
         List<Position> toRemove = new List<Position>();
-        foreach(Position pos in _objects.Keys)
+        foreach(Position pos in _nodes.Keys)
         {
             if(list.Find(p => p.Key == pos).Equals(default(KeyValuePair<Position, TData>)))
             {
@@ -67,7 +67,7 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
         }
         foreach(Position pos in toRemove)
         {
-            RemoveAt(pos);
+            RemoveNodeAt(pos);
         }
         
         foreach(var pair in list)
@@ -78,10 +78,10 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     public void Reset()
     {
-        List<Position> positions = new List<Position>(_objects.Keys);
+        List<Position> positions = new List<Position>(_nodes.Keys);
         foreach(Position pos in positions)
         {
-            RemoveAt(pos);
+            RemoveNodeAt(pos);
         }
         
         Create();
@@ -96,9 +96,9 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     protected void GenerateIfNeeded(Position pos)
     {
-        if(!_objects.ContainsKey(pos))
+        if(!_nodes.ContainsKey(pos))
         {
-            TNode node = CreateAt(pos);
+            TNode node = CreateNodeAt(pos);
             node.GenerateContent();
         }
     }
@@ -124,39 +124,39 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     private void SetNodeTo(Position pos, TData initialData)
     {
-        if(_objects.ContainsKey(pos))
+        if(_nodes.ContainsKey(pos))
         {
-            _objects[pos].FromData(initialData);
+            _nodes[pos].FromData(initialData);
         }
         else
         {
-            TNode node = CreateAt(pos);
+            TNode node = CreateNodeAt(pos);
             node.FromData(initialData);
         }
     }
 
-    private TNode CreateAt(Position pos)
+    private TNode CreateNodeAt(Position pos)
     {
-        GameObject go = (GameObject.Instantiate(ObjectPrefab) as GameObject);
-        go.transform.parent = ObjectsParent;
+        GameObject go = (GameObject.Instantiate(NodesPrefab) as GameObject);
+        go.transform.parent = NodesParent;
         
         TNode node = go.GetComponent<TNode>();
         node.Init((TSelf)this, pos);
-        _objects[pos] = node;
+        _nodes[pos] = node;
         
         return node;
     }
 
-    private void Remove(Position pos, TNode node)
+    private void RemoveNode(Position pos, TNode node)
     {
         GameObject.Destroy(node.gameObject);
         
-        _objects.Remove(pos);
+        _nodes.Remove(pos);
     }
     
-    private void RemoveAt(Position pos)
+    private void RemoveNodeAt(Position pos)
     {
-        Remove(pos, _objects[pos]);
+        RemoveNode(pos, _nodes[pos]);
     }
     
     #endregion
@@ -166,7 +166,7 @@ public abstract class Grid<TSelf, TNode, TData> : MonoBehaviour
     
     #region private members
 
-    private SortedDictionary<Position, TNode> _objects;
+    private SortedDictionary<Position, TNode> _nodes;
 
     #endregion
     

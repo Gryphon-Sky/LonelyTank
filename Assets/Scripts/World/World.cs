@@ -7,7 +7,7 @@ public class World : Grid<World, Chunk, Chunk.Data>
     
     #region Grid
     
-    protected override GameObject ObjectPrefab { get { return Settings.Instance.ChunkPrefab; } }
+    protected override GameObject NodesPrefab { get { return Settings.Instance.ChunkPrefab; } }
 
     protected override void Create()
     {
@@ -32,7 +32,7 @@ public class World : Grid<World, Chunk, Chunk.Data>
         if(obstacle.IsBush)
         {
             Chunk chunk = obstacle.transform.parent.parent.GetComponent<Chunk>();
-            chunk.Remove(obstacle);
+            chunk.RemoveNode(obstacle);
         }
     }
 

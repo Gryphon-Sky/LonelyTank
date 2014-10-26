@@ -41,7 +41,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400004}
-  - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: Obstacles
   m_TagString: Untagged
@@ -109,23 +108,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9abcdce09271e874fafa29d533f1a8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObjectsParent: {fileID: 400004}
+  NodesParent: {fileID: 400004}
   Terrain: {fileID: 400000}
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9a66928285f2dc47b5631b4cf3fa6b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tree: {fileID: 0}
-  Bush: {fileID: 0}
-  Puddle: {fileID: 0}
-  Rock: {fileID: 0}
 --- !u!212 &21200000
 SpriteRenderer:
   m_ObjectHideFlags: 1
