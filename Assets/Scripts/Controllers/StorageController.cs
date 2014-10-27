@@ -46,9 +46,8 @@ public static class StorageController
         
         using(FileStream fs = new FileStream(PATH, FileMode.OpenOrCreate))
         {
-            Utils.Log("Saving to " + fs.Name + "...");
             formatter.Serialize(fs, data);
-            Utils.Log("...done.");
+            Utils.Log("Game state saved to " + fs.Name + ".");
         }
     }
 
@@ -60,10 +59,9 @@ public static class StorageController
         {
             using(FileStream fs = new FileStream(PATH, FileMode.Open))
             {
-                Utils.Log("Loading from " + fs.Name + "...");
                 StoragableData data = (StoragableData)formatter.Deserialize(fs);
                 data.Setup(tank, world);
-                Utils.Log("...done.");
+                Utils.Log("Game state loaded from " + fs.Name + ".");
             }
         }
         else

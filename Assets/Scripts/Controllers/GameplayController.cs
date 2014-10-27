@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public class GameplayController : MonoBehaviour
 {
@@ -9,7 +8,6 @@ public class GameplayController : MonoBehaviour
     #region exposed
     
     public InputController InputController;
-    public BushSpawnController BushSpawnController;
 
     public World World;
     public Tank Tank;
@@ -29,7 +27,7 @@ public class GameplayController : MonoBehaviour
         InputController.OnLoad = Load;
         InputController.OnReset = Reset;
 
-        //Load();
+        Load();
 
         BushSpawnController.StartSpawn(World);
     }
@@ -55,6 +53,7 @@ public class GameplayController : MonoBehaviour
     {
         Tank.Reset();
         World.Reset();
+        Utils.Log("Game state resetted.");
     }
 
     #endregion

@@ -1,16 +1,16 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
-public class BushSpawnController : MonoBehaviour
+public static class BushSpawnController
 {
     ////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////
     
     #region public methods
     
-    public void StartSpawn(World world)
+    public static void StartSpawn(World world)
     {
-        StartCoroutine(BushSpawnCoroutine(world));
+        world.StartCoroutine(BushSpawnCoroutine(world));
     }
     
     #endregion
@@ -20,7 +20,7 @@ public class BushSpawnController : MonoBehaviour
     
     #region events
 
-    private IEnumerator BushSpawnCoroutine(World world)
+    private static IEnumerator BushSpawnCoroutine(World world)
     {
         while(true)
         {
