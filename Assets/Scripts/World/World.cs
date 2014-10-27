@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class World : Grid<Chunk, Chunk.Data>
@@ -14,9 +15,6 @@ public class World : Grid<Chunk, Chunk.Data>
     {
         base.Create();
         EnlargeAround(0, 0);
-
-        _bushDetectionRadiusSqr = Settings.Instance.BushDetectionRadius * Settings.Instance.BushDetectionRadius;
-        _tankDetectionRadiusSqr = Settings.Instance.TankDetectionRadius * Settings.Instance.TankDetectionRadius;
     }
     
     protected override void RemoveNodeFrom(Position pos)
@@ -44,26 +42,23 @@ public class World : Grid<Chunk, Chunk.Data>
         Create();
     }
     
-    public void SpawnBush(Tank tank)
+    public void SpawnBush()
     {
         Dictionary<Obstacle, int> slots = new Dictionary<Obstacle, int>();
         int chances = 0;
         foreach(Obstacle slot in _freeSlots)
         {
-            if(Utils.GetSqrDistance(slot, tank) > _tankDetectionRadiusSqr)
+            int bushes = 0;
+            foreach(Obstacle bush in _bushes)
             {
-                int bushes = 0;
-                foreach(Bush bush in _bushes)
+                if(Position.IsNear(slot.GlobalPos, bush.GlobalPos))
                 {
-                    if(Utils.GetSqrDistance(slot, bush) <= _bushDetectionRadiusSqr)
-                    {
-                        ++bushes;
-                    }
+                    ++bushes;
                 }
-                int chance = Settings.Instance.MaxBushAround + 1 - bushes;
-                slots.Add(slot, chance);
-                chances += chance;
             }
+            int chance = Settings.Instance.MaxBushAround + 1 - bushes;
+            slots.Add(slot, chance);
+            chances += chance;
         }
 
         if(slots.Count == 0)
@@ -88,7 +83,7 @@ public class World : Grid<Chunk, Chunk.Data>
         if(bushSlot != null)
         {
             bushSlot.SpawnBush();
-            _bushes.Add(bushSlot.Bush);
+            _bushes.Add(bushSlot);
             _freeSlots.Remove(bushSlot);
         }
     }
@@ -111,7 +106,7 @@ public class World : Grid<Chunk, Chunk.Data>
         {
             obstacle.Reset();
             _freeSlots.Add(obstacle);
-            _bushes.Remove(obstacle.Bush);
+            _bushes.Remove(obstacle);
         }
     }
 
@@ -135,7 +130,8 @@ public class World : Grid<Chunk, Chunk.Data>
         List<Obstacle> allObstacles = new List<Obstacle>(transform.GetComponentsInChildren<Obstacle>());
         _freeSlots = allObstacles.FindAll(o => (o.Type == Obstacle.EType.None));
 
-        _bushes = new List<Bush>(transform.GetComponentsInChildren<Bush>());
+        List<Bush> bushes = new List<Bush>(transform.GetComponentsInChildren<Bush>());
+        _bushes = bushes.Select(b => b.Parent).ToList();
     }
 
     #endregion
@@ -146,10 +142,7 @@ public class World : Grid<Chunk, Chunk.Data>
     #region private members
 
     private List<Obstacle> _freeSlots;
-    private List<Bush> _bushes;
-
-    private float _bushDetectionRadiusSqr;
-    private float _tankDetectionRadiusSqr;
+    private List<Obstacle> _bushes;
 
     #endregion
     

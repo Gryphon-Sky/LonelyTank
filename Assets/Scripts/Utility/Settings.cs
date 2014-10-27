@@ -25,9 +25,8 @@ public class Settings : MonoBehaviour
 
     public float BushSpawnPeriod = 5.0f;
     public float BushDetectionRadius = 70.0f;
-    public float TankDetectionRadius = 25.0f;
 
-    public int MaxBushAround = 4;
+    public int MaxBushAround = 8;
 
     #endregion
     

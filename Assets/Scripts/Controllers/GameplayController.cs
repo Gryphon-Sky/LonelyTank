@@ -9,6 +9,7 @@ public class GameplayController : MonoBehaviour
     #region exposed
     
     public InputController InputController;
+    public BushSpawnController BushSpawnController;
 
     public World World;
     public Tank Tank;
@@ -30,7 +31,7 @@ public class GameplayController : MonoBehaviour
 
         //Load();
 
-        StartCoroutine(BushSpawnCoroutine());
+        BushSpawnController.StartSpawn(World);
     }
     
     #endregion
@@ -54,15 +55,6 @@ public class GameplayController : MonoBehaviour
     {
         Tank.Reset();
         World.Reset();
-    }
-
-    private IEnumerator BushSpawnCoroutine()
-    {
-        while(true)
-        {
-            yield return new WaitForSeconds(Settings.Instance.BushSpawnPeriod);
-            World.SpawnBush(Tank);
-        }
     }
 
     #endregion

@@ -54,6 +54,8 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
         }
     }
 
+    public Position GlobalPos { get; private set; }
+
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +72,7 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
     {
         Type = EType.None;
     }
-    
+
     #endregion
     
     ////////////////////////////////////////////////////////////////////////////////
@@ -96,6 +98,10 @@ public class Obstacle : MonoBehaviour, INode<Obstacle.Data>
         transform.localPosition = localPos;
 
         Type = EType.None;
+
+        Chunk parent = transform.parent.parent.GetComponent<Chunk>();
+        GlobalPos = new Position(parent.Pos.X * Settings.Instance.Grid.X + Pos.X,
+                                 parent.Pos.Y * Settings.Instance.Grid.Y + Pos.Y);
     }
     
     public void GenerateContent()

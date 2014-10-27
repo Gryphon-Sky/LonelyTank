@@ -31,6 +31,11 @@ public struct Position
     ////////////////////////////////////////////////////////////////////////////////
     
     #region utility
+
+    public static bool IsNear(Position pos1, Position pos2)
+    {
+        return ((Math.Abs(pos1.X - pos2.X) <= 1) && (Math.Abs(pos1.Y - pos2.Y) <= 1));
+    }
     
     public static bool operator==(Position pos1, Position pos2)
     {
